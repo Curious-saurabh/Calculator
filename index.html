@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number System Converter</title>
+ <style>
+     /* styles.css */
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px 50px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 350px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.converter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+label {
+    margin: 10px 0 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+select:focus {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+.result {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.result label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+.result input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: #333;
+}
+ </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Number System Converter</h1>
+        <div class="converter">
+            <label for="number">Enter Number:</label>
+            <input type="text" id="number" placeholder="Enter number">
+
+            <label for="fromBase">From Base:</label>
+            <select id="fromBase">
+                <option value="2">Binary</option>
+                <option value="8">Octal</option>
+                <option value="10">Decimal</option>
+                <option value="16">Hexadecimal</option>
+            </select>
+
+            <label for="toBase">To Base:</label>
+            <select id="toBase">
+                <option value="2">Binary</option>
+                <option value="8">Octal</option>
+                <option value="10">Decimal</option>
+                <option value="16">Hexadecimal</option>
+            </select>
+
+            <button onclick="convert()">Convert</button>
+
+            <div class="result">
+                <label for="result">Result:</label>
+                <input type="text" id="result" readonly>
+            </div>
+        </div>
+    </div>
+
+    <script  >
+        
+function convert() {
+    const number = document.getElementById('number').value.trim();
+    const fromBase = parseInt(document.getElementById('fromBase').value);
+    const toBase = parseInt(document.getElementById('toBase').value);
+
+    if (number === '') {
+        alert('Please enter a number.');
+        return;
+    }
+
+    const numberParts = number.split('.');
+    let integerPart = numberParts[0];
+    let fractionalPart = numberParts[1] || '';
+
+    let decimalNumber;
+    try {
+        decimalNumber = parseInt(integerPart, fromBase);
+        if (isNaN(decimalNumber)) {
+            throw new Error('Invalid number');
+        }
+    } catch (e) {
+        alert('Invalid number for the selected base.');
+        return;
+    }
+
+    let fractionalValue = 0;
+    for (let i = 0; i < fractionalPart.length; i++) {
+        fractionalValue += parseInt(fractionalPart[i], fromBase) / Math.pow(fromBase, i + 1);
+    }
+
+    let convertedInteger = decimalNumber.toString(toBase).toUpperCase();
+    let convertedFractional = '';
+
+    if (fractionalPart.length > 0) {
+        let fractional = fractionalValue;
+        let precision = 10; // number of digits after decimal point
+
+        for (let i = 0; i < precision; i++) {
+            fractional *= toBase;
+            let fractionDigit = Math.floor(fractional);
+            convertedFractional += fractionDigit.toString(toBase).toUpperCase();
+            fractional -= fractionDigit;
+        }
+    }
+
+    let result = convertedInteger;
+    if (convertedFractional.length > 0) {
+        result += '.' + convertedFractional;
+    }
+
+    document.getElementById('result').value = result;
+}
+    </script>
+</body>
+</html>
